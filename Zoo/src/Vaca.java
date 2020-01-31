@@ -1,22 +1,17 @@
 
 public class Vaca extends Animal {
-
 	@Override
-	public String mou(Zoo zoo) {
-		
-		return "\nUna vaca es posa a dormir.";
+	public String moverse(Zoo zoo) {
+		return "\nUna vaca se pone a dormir.";
 	}
 
 	@Override
-	public String alimenta(Zoo zoo) {
-
-		return "\nUna vaca comença a pastar amb tranquil·litat.";
+	public String alimentarse(Zoo zoo) {
+		return "\nUna vaca empieza a pastar tranquilamente.";
 	}
 
 	@Override
-	public String expressa(Zoo zoo) {
-		
-		return "\nUna vaca fa mu.";
+	public String expresarse(Zoo zoo) {
+		return "\nUna vaca hace mu.";
 	}
-
 }

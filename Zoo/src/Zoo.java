@@ -2,121 +2,99 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
 public class Zoo extends Animal {
-
-	List<Animal> llistaAnimals = new ArrayList<Animal>();	 
-	
+	List<Animal> listaAnimales = new ArrayList<Animal>();	 
 	Espectador esp = new Espectador();
-	
+	Vaca vaca = new Vaca();
+	Cocodrilo coco = new Cocodrilo();
 	Random rnd = new Random();
 	
-	Vaca vaca = new Vaca();
-	
-	Cocodril coco = new Cocodril();
-	
-	
-	public Animal mostraAnimal() {
-		return llistaAnimals.get(rnd.nextInt(llistaAnimals.size())); // Devuelve un animal aleatorio (Número aleatorio entre el número de posiciones del ArrayList)
+	public Animal mostrarAnimal() {
+		return listaAnimales.get(rnd.nextInt(listaAnimales.size())); // Devuelve un animal aleatorio (Número aleatorio entre el número de posiciones del ArrayList)
 	}
 	
-	public void afegeixAnimal(String animal) {
-		if(animal.toLowerCase().equals("vaca")){ // Así pasamos la cadena a minúscula para evitar errores 
-			llistaAnimals.add(vaca);
+	public void añadirAnimal(Animal animal) {
+		if(animal instanceof Vaca){ 
+			listaAnimales.add(vaca);
 		}
 		
-		else if(animal.toLowerCase().equals("cocodril")) {
-			llistaAnimals.add(coco);
-		};
-	}
-	
-	public void suprimeixAnimal(String animal) {
-		if(animal.toLowerCase().equals("vaca")){
-			llistaAnimals.remove(vaca);
+		else if(animal instanceof Cocodrilo) {
+			listaAnimales.add(coco);
 		}
-		
-		else if(animal.toLowerCase().equals("cocodril")) {
-			llistaAnimals.remove(coco);
-		};
 	}
 	
-	public void suprimeixAnimal(Animal animal) { // Sobrecargamos el método para que reciba un objeto de tipo Animal y lo elimine de la lista
+	public void eliminarAnimal(Animal animal) {
 		if(animal instanceof Vaca){
-			llistaAnimals.remove((Vaca)animal);
+			listaAnimales.remove(vaca);
 		}
 		
-		else if(animal instanceof Cocodril) {
-			llistaAnimals.remove((Vaca)animal);
-		};
-	}
-	
-	public void suprimeixTots(String animal) {
-	
-		if(animal.toLowerCase().equals("vaca")){
-				while(llistaAnimals.contains(vaca)){
-					llistaAnimals.remove(vaca);
-				}
-			}
-		
-		if(animal.toLowerCase().equals("cocodril")){
-			while(llistaAnimals.contains(coco)){
-				llistaAnimals.remove(coco);
-			}
+		else if(animal instanceof Cocodrilo) {
+			listaAnimales.remove(coco);
 		}
 	}
 	
-	public void mira() {
+	public void eliminarTodos(Animal animal) {
+		if(animal instanceof Vaca){
+			while(listaAnimales.contains(vaca)){
+				listaAnimales.remove(vaca);
+			}
+		}
+		
+		else if(animal instanceof Cocodrilo){
+			while(listaAnimales.contains(coco)){
+				listaAnimales.remove(coco);
+			}
+		}
+	}
 	
+	public void mirar() {
 		int num, num_animal;
-		
 		num = rnd.nextInt(2); // Devuelve un número aleatorio entre 0 y 1
-		
 		num_animal = rnd.nextInt(2);
 		
 		switch(num) {
-		
-			case 0: System.out.println(esp.accio(this)); // Con eso le pasaremos el objeto Zoo del main
+			case 0: System.out.println(esp.accion(this)); // Acción del espectador
 					break;
 			
-			case 1:	if(llistaAnimals.contains(vaca) && llistaAnimals.contains(coco))
-				switch(num_animal) {
-				case 0: System.out.println(vaca.accio(this));
-				break;
+			case 1:	if(listaAnimales.contains(vaca) && listaAnimales.contains(coco)) {
+						switch(num_animal) {
+							case 0: System.out.println(vaca.accion(this));
+							break;
 					
-				case 1: System.out.println(coco.accio(this));
-				break;
-			}		
+							case 1: System.out.println(coco.accion(this));
+							break;
+						}
+					}
 				
-			else if(llistaAnimals.contains(vaca)){
-						System.out.println(vaca.accio(this));
+					else if(listaAnimales.contains(vaca)){
+						System.out.println(vaca.accion(this));
 						break;
 					}
 					
-			else if(llistaAnimals.contains(coco)){
-						System.out.println(coco.accio(this));
+					else if(listaAnimales.contains(coco)){
+						System.out.println(coco.accion(this));
 						break;
 					}
-				
 		}
 	}
 	
 	@Override
-	public String mou(Zoo zoo) {
+	public String moverse(Zoo zoo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String alimenta(Zoo zoo) {
+	public String alimentarse(Zoo zoo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String expressa(Zoo zoo) {
+	public String expresarse(Zoo zoo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
 }

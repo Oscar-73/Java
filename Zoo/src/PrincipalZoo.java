@@ -1,138 +1,135 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class PrincipalZoo {
-
 	public static void main(String[] args) {
-				
 		Zoo zoo = new Zoo();
-		
 		String animal;
-		
-		int opcio = 0;
-		
+		Vaca vaca = new Vaca();
+		Cocodrilo cocodrilo = new Cocodrilo();
+		int opcion = 999;
 		Scanner sc = new Scanner(System.in);
 		
-		do{System.out.println("\nEl zoo obre les seves portes.");
+		System.out.println("\nEl zoo abre sus puertas.");
 		
-		System.out.println("\nQuè vols fer?");
-		System.out.println("\n 1 - Afegir vaca / afegir cocodril");
-		System.out.println("\n 2 - Eliminar vaca / eliminar cocodril");
-		System.out.println("\n 3 - Eliminar totes les vaques / eliminar tots els cocodrils");
-		System.out.println("\n 4 - Mirar als animals");
-		System.out.println("\n 0 - Sortir");
-
-		System.out.println("\nElecció: ");
-		
-		opcio = sc.nextInt();
-		
-		switch(opcio) {
+		do{
+			System.out.println("\n¿Qué quieres hacer?");
+			System.out.println("\n 1 - Añadir vaca/cocodrilo");
+			System.out.println(" 2 - Eliminar vaca/cocodrilo");
+			System.out.println(" 3 - Eliminar todas las vacas/cocodrilos");
+			System.out.println(" 4 - Mirar a los animales");
+			System.out.println(" 0 - Salir");
+	
+			try {
+				System.out.println("\nElección: ");
+				opcion = sc.nextInt();
+				sc.nextLine();
+			} catch(InputMismatchException e) {
+				System.out.println("\n¡La elección ha de ser un número!\nCerrando programa...");
+				break;
+			}
 			
-			case 1: System.out.println("\nQuè vols afegir? Una vaca o un cocodril?: ");
+			switch(opcion) {
+				case 1: System.out.println("\n¿Qué quieres añadir? ¿Una vaca o un cocodrilo?: ");
+						animal = sc.nextLine(); 
 					
-					animal = sc.next(); // Ponemos "Next" a secas porque "NextLine" pilla el salto de línia y lo "anula" 
+						if(animal.toLowerCase().equals("vaca")) {
+							zoo.añadirAnimal(vaca);
+							System.out.println("\nHa llegado al zoo una enorme vaca.");
+							break;
+						}
+						
+						else if(animal.toLowerCase().equals("cocodrilo")) {
+							zoo.añadirAnimal(cocodrilo);
+							System.out.println("\nHa llegado al zoo un peligroso cocodrilo.");
+							break;
+						}
+						
+						else {
+							System.out.println("\nAnimal no reconocido.\n");
+							break;
+						}
 				
-					if(animal.toLowerCase().equals("vaca")) {
-						zoo.afegeixAnimal("vaca");
-						System.out.println("\nHa arribat al zoo una enorme vaca.");
-						break;
-					}
-					
-					else if(animal.toLowerCase().equals("cocodril")) {
-						zoo.afegeixAnimal("cocodril");
-						System.out.println("\nHa arribat al zoo un perillós cocodril.");
-						break;
-					}
-					
-					else
-						System.out.println("\nAnimal no reconegut.");
-						System.out.println("");
-						break;
-			
-			case 2: System.out.println("\nQuè vols eliminar? Una vaca o un cocodril?: ");
-			
-					animal = sc.next();
-			
-					if(animal.toLowerCase().equals("vaca")) {
+				case 2: System.out.println("\n¿Qué quieres eliminar? ¿Una vaca o un cocodrilo?: ");
+						animal = sc.next();
+				
+						if(animal.toLowerCase().equals("vaca")) {
+							if(zoo.listaAnimales.contains(zoo.vaca)) {
+								zoo.eliminarAnimal(vaca);
+								System.out.println("\nSe ha trasladado una vaca a otro zoo.");
+								break;
+							}
+							else {
+								System.out.println("\nNo hay vacas en el zoo.");
+								break;
+							}
+						}
 						
-						if(zoo.llistaAnimals.contains(zoo.vaca)) {
-							zoo.suprimeixAnimal("vaca");
-							System.out.println("\nS'ha traslladat a una vaca a un altre zoo.");
+						else if(animal.toLowerCase().equals("cocodrilo")) {
+							if(zoo.listaAnimales.contains(zoo.coco)) {
+								zoo.eliminarAnimal(cocodrilo);
+								System.out.println("\nSe ha trasladado un cocodrilo a otro zoo.");
+								break;
+							}
+							else {
+								System.out.println("\nNo hay cocodrilos en el zoo.");
+								break;
+							}
+						}
+						
+						else {
+							System.out.println("\nAnimal no reconocido.");							
 							break;
 						}
 						
-						else
-							System.out.println("\nNo hi han vaques al zoo.");
-							break;
-					}
-					
-					else if(animal.toLowerCase().equals("cocodril")) {
-						
-						if(zoo.llistaAnimals.contains(zoo.coco)) {
-							zoo.suprimeixAnimal("cocodril");
-							System.out.println("\nS'ha traslladat a una cocodril a un altre zoo.");
-							break;
+				case 3: System.out.println("\n¿Qué quieres eliminar? ¿Todas las vacas o todos los cocodrilos?: ");
+						animal = sc.next();
+				
+						if(animal.toLowerCase().equals("vaca") || animal.toLowerCase().equals("vacas")) {
+							if(zoo.listaAnimales.contains(zoo.vaca)) {
+								zoo.eliminarTodos(vaca);
+								System.out.println("\nEl zoo deja de tener vacas.");
+								break;
+							}
+							else {
+								System.out.println("\nNo hay vacas en el zoo.");
+								break;
+							}
 						}
 						
-						else
-							System.out.println("\nNo hi han cocodrils al zoo.");
+						else if(animal.toLowerCase().equals("cocodrilo") || animal.toLowerCase().equals("cocodrilos")) {
+							if(zoo.listaAnimales.contains(zoo.coco)) {
+								zoo.eliminarTodos(cocodrilo);
+								System.out.println("\nEl zoo deja de tener cocodrilos.");
+								break;
+							}
+							else {
+								System.out.println("\nNo hay cocodrilos en el zoo.");
+								break;
+							}
+						}
+						
+						else {
+							System.out.println("\nAnimal no reconocido.");
+							System.out.println("");
 							break;
-					}
-					
-					else
-						System.out.println("\nAnimal no reconegut.");
-						System.out.println("");
+						}
+				
+				case 4: if(zoo.listaAnimales.isEmpty()) {
+							System.out.println("\n¡Qué zoo más aburrido! No tiene ningún animal.");
+							break;
+						}
+						else {
+							zoo.mirar();
+							break;
+						}						
+
+				case 0: System.out.println("\n¡Esperamos que hayas disfrutado tu estancia en nuestro peculiar zoo!");
 						break;
-						
-			case 3: System.out.println("\nQuè vols eliminar? Totes les vaques o els cocodrils?: ");
-			
-					animal = sc.next();
-			
-					if(animal.toLowerCase().equals("vaca")) {
-						
-						if(zoo.llistaAnimals.contains(zoo.vaca)) {
-							zoo.suprimeixTots("vaca");
-							System.out.println("\nEl zoo deixa de tenir vaques.");
-							break;
-						}
-						
-						else
-							System.out.println("\nNo hi han vaques al zoo.");
-							break;
-					}
-					
-					else if(animal.toLowerCase().equals("cocodril")) {
-					
-						if(zoo.llistaAnimals.contains(zoo.coco)) {
-							zoo.suprimeixTots("cocodril");
-							System.out.println("\nEl zoo deixa de tenir cocodrils.");
-							break;
-						}
-						
-						else
-							System.out.println("\nNo hi han cocodrils al zoo.");
-							break;
-					}
-					
-					else
-						System.out.println("\nAnimal no reconegut.");
-						System.out.println("");
-						break;
-			
-			case 4: if(zoo.llistaAnimals.isEmpty()) {
-						System.out.println("\nQuin zoo més avorrit! No té cap animal.");
-					}
-			
-					else
-						zoo.mira();
-			
-					break;
-					
-		}
-		
-	}while(opcio != 0);
-		
-		System.out.println("\nEsperem que hagis disfrutat l'estància al nostre peculiar zoo!");
+				
+				default: System.out.println("\nOpción no reconocida.");
+						 break;
+			}
+		}while(opcion != 0);
 	}
 }
