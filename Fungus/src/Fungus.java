@@ -20,54 +20,45 @@ public abstract class Fungus {
 		this.col = col;
 	}
 
-	public Fungus(Colonia colonia) { // Pasamos solo la colonia porque el ejercicio no nos pide más variables de esta clase 
+	public Fungus(Colonia colonia) { 
 		this.colonia = colonia;
 	}
 	
+	// Método con el cual asignamos un símbolo a cada clase de hongo
 	public char getChar() {
-		
-		if(colonia.getNom().toLowerCase().equals("compactus")) {
+		if(colonia.getNombre().toLowerCase().equals("compactus")) {
 			return 'O';
 		}
 		
-		else if(colonia.getNom().toLowerCase().equals("dispersus")) {
+		else if(colonia.getNombre().toLowerCase().equals("dispersus")) {
 			return '+';
 		}
 		
-		else if(colonia.getNom().toLowerCase().equals("agresibus")) {
+		else if(colonia.getNombre().toLowerCase().equals("agresivus")) {
 			return 'x';
 		}
 		
 		return '.';
 	}
 	
-	abstract void creix(Cultiu cult); // Lo hacemos abstract porque la clase Fungus en sí, no va a utilizar el método
-						   // lo van a usar sus subclases
+	// Lo hacemos abstract porque la clase Fungus en sí, no va a utilizar el método, lo van a usar sus subclases
+	abstract void crecer(Cultivo cult); 
 	
-	public boolean posa(Cultiu c, int fila, int colum) {
+	public boolean ocupar(Cultivo c, int fila, int colum) {
+		boolean puesto = false;
 		
-		boolean posat = false;
-		
-		if(c.esDins(fila, colum) == true ) {
-			
-			if(this instanceof Arrencador) {
-				if(c.esArrencable(fila, colum) == true) {
-					posat = true;
-				}
-			
-				else if(c.NoOcupat(fila, colum) == true) {
-					posat = true;
-				}
+		if(c.estaDentro(fila, colum) == true) {
+			if(this instanceof Ejecutor) {
+				if(c.esArrancable(fila, colum) == true)
+					puesto = true;
+				else if(c.NoOcupado(fila, colum) == true)
+					puesto = true;
 			}
 			
-			else if(c.NoOcupat(fila, colum) == true) {
-				posat = true;
+			else if(c.NoOcupado(fila, colum) == true) {
+				puesto = true;
 			}
 		}	
-		
-		return posat;
+		return puesto;
 	}
 }
-	
-
-

@@ -1,43 +1,38 @@
 
 public class Colonia implements Comparable<Colonia> {
 	
-	private String nom;
-	private int poblacio;
+	private String nombre;
+	private int poblacion;
 	
-	public int getPoblacio() {
-		return poblacio;
+	public int getPoblacion() {
+		return poblacion;
 	}
 
-	public String getNom() {
-		return nom;
+	public String getNombre() {
+		return nombre;
 	}
 
-	public Colonia(String nom, int poblacio) {
-		this.nom = nom;
-		this.poblacio = poblacio;
+	public Colonia(String nombre, int poblacion) {
+		this.nombre = nombre;
+		this.poblacion = poblacion;
 	}
 	
-	public void augmentaPoblacio() {
-		poblacio++;  
+	public void aumentarPoblacion() {
+		poblacion++; 
 	}
 	
-	public void disminueixPoblacio() {
-		poblacio--;
+	public void disminuirPoblacion() {
+		poblacion--;
 	}
 
 	@Override
 	public int compareTo(Colonia c) {
-		
 		int comp_c;
 		
-		if (poblacio > c.poblacio) { 
-			comp_c = 1;
-		}
-		
-		else if(poblacio == c.poblacio) {
+		if (poblacion > c.poblacion) 
+			comp_c = 1;		
+		else if(poblacion == c.poblacion)
 			comp_c = 0;
-		}
-			
 		else
 			comp_c = -1;
 		
@@ -46,12 +41,6 @@ public class Colonia implements Comparable<Colonia> {
 	
 	@Override
 	public String toString() {
-
-		String cadena = "";
-		
-		System.out.println("Colònia " + nom + " , població: "+ poblacio);
-		
-		return cadena;
+		return "Colonia " + nombre + ", población: "+ poblacion;
 	}
-
 }

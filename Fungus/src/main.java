@@ -4,48 +4,44 @@ import java.util.Collections;
 public class main {
 
 	public static void main(String[] args) {
+		Colonia colCompactus = new Colonia("compactus", 0);
+		Colonia colDispersus = new Colonia("dispersus", 0);
+		Colonia colAgresivus = new Colonia("agresivus", 0);
 		
-		ArrayList<Colonia> ordrecolon = new ArrayList<Colonia>(); 
+		Compactus fungComp = new Compactus(colCompactus);
+		Dispersus fungDisp = new Dispersus(colDispersus);
+		Agresivus fungAgre = new Agresivus(colAgresivus);
 		
-		Colonia compactus = new Colonia("compactus", 0);
-		Colonia dispersus = new Colonia("dispersus", 0);
-		Colonia agresibus = new Colonia("agresibus", 0);
 		
-		Cultiu cult1 = new Cultiu(10, 10); // Creamos un cultiu (matriz) de 10x10
+		Cultivo cult = new Cultivo(10, 10); // Creamos un Cultivo (matriz) de 10x10 en los que colocar los hongos
 		
-		Compactus comp = new Compactus(compactus);
-		Dispersus disp = new Dispersus(dispersus);
-		Dispersus agre = new Dispersus(agresibus);
+		// Posiciones iniciales de los hongos
+		cult.setFungus(fungComp, 1, 4);
+		cult.setFungus(fungDisp, 4, 4);
+		cult.setFungus(fungAgre, 7, 4);
 		
-		cult1.setFungus(comp, 1, 4);
-		cult1.setFungus(agre, 7, 4);
-		cult1.setFungus(disp, 4, 4);
-		
-		System.out.println("Estat inicial.");
-		
-		cult1.dibuixa();
-		
+		System.out.println("Estado inicial.");
+		cult.imprimirCultivo(); // Imprimimos el estado inicial del cultivo
 		
 		for(int i = 0; i < 100; i++) {
-			cult1.temps();
+			cult.tiempo(); // Llamamos al método "tiempo()" cien veces
 		}
 		
-		System.out.println("\nEstat final.");
+		System.out.println("\nEstado final.");
+		cult.imprimirCultivo(); // Imprimimos el estado final del cultivo
+
+		ArrayList<Colonia> ordenColonia = new ArrayList<Colonia>(); // Creamos un ArrayList de Colonia para introducir las colonias tras su estado final 
 		
-		cult1.dibuixa();
-		
-		ordrecolon.add(compactus);
-		ordrecolon.add(dispersus);
-		ordrecolon.add(agresibus);
+		ordenColonia.add(colCompactus);
+		ordenColonia.add(colDispersus);
+		ordenColonia.add(colAgresivus);
 		
 		System.out.println("\n");
 		
-		ordrecolon.sort(Collections.reverseOrder());
+		ordenColonia.sort(Collections.reverseOrder()); // Ordenamos las colonias por su población
 		
-		for(Colonia c: ordrecolon) {
+		for(Colonia c: ordenColonia) {
 			System.out.println(c); // Llama automáticamente al método toString de la clase Colonia
 		}
-			
-
 	}
 }

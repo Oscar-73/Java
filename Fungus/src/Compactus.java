@@ -1,14 +1,14 @@
 
-public class Compactus extends Fungus implements Arrencable {
+public class Compactus extends Fungus implements Ejecutable {
 	
 	public Compactus(Colonia colonia) {
 		super(colonia);
-		// TODO Auto-generated constructor stub
 	}
 
+	// Los hongos Dispersus crecen en ocho posiciones a su alrededor, pero son pacíficos, nunca devorarán a otro hongo.
+	// Son representados como "O".
 	@Override
-	void creix(Cultiu cult) {
-		
+	void crecer(Cultivo cult) {
 		Compactus comp1 = new Compactus(colonia);
 		Compactus comp2 = new Compactus(colonia);
 		Compactus comp3 = new Compactus(colonia);
@@ -26,8 +26,5 @@ public class Compactus extends Fungus implements Arrencable {
 		cult.setFungus(comp6, this.getFila()+1, this.getCol()-1);
 		cult.setFungus(comp7, this.getFila()+1, this.getCol());
 		cult.setFungus(comp8, this.getFila()+1, this.getCol()+1);
-
 	}
-	
-	
 }
