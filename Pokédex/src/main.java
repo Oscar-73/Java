@@ -535,7 +535,8 @@ public class main extends JFrame {
 		
 		TiposPokemon(poke); // Método con el que mostramos los tipos del Pokémon de forma gráfica
 		
-		switch(poke.getGeneracion()) { // Mostramos la generación y región a la cual pertenece el Pokémon
+		// Mostramos la generación y región a la cual pertenece el Pokémon
+		switch(poke.getGeneracion()) {
 		case 1: lblGeneracion.setText("Primera generación");
 				lblRegion.setText(("Kanto"));
 				break;
@@ -555,7 +556,8 @@ public class main extends JFrame {
 				break;
 		}
 		
-		if(poke.isLegendario()) // Mostramos si el Pokémon es o no legendario
+		// Mostramos si el Pokémon es o no legendario
+		if(poke.isLegendario())
 			lblLegendario.setText("¡Legendario!");
 		else
 			lblLegendario.setText(null);
@@ -598,6 +600,7 @@ public class main extends JFrame {
         datasetEstadisticas.addValue(poke.getVelocidad(), "Estadística", "Velocidad");
 	}
 	
+	// Método con el que mostramos los tipo(s) del Pokémon
 	private void TiposPokemon(Pokemon poke) {
 		ImageIcon tipo1 = new ImageIcon("src/imagenes/tipos/"+poke.getTipo1()+".png");		
 		lblTipo1.setIcon(tipo1);
@@ -606,6 +609,7 @@ public class main extends JFrame {
 		lblTipo2.setIcon(tipo2);
 	}
 	
+	// Método que deja la Pokédex vacia
 	private void vaciarPokedex() {
 		lblNombreIDPoke.setText(null);
 		lblGeneracion.setText(null);
