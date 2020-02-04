@@ -1,65 +1,58 @@
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Window.Type;
 import java.awt.Font;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.EventQueue;
 import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Random;
-import java.awt.event.ActionEvent;
-import javax.swing.JTextPane;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.DropMode;
 import javax.swing.SwingConstants;
+import javax.swing.border.EtchedBorder;
+
+import java.util.Random;
 
 public class main extends JFrame {
 
+	private static JFrame frame;
 	private JPanel contentPane;
-	private JTextField txtObjectiu;
+	private JButton btnNuevoNumero;
+	private JButton btnReiniciar;
+	private JLabel lblObjetivo;
 	private JButton btnNum1;
 	private JButton btnNum2;
 	private JButton btnNum3;
 	private JButton btnNum5;
 	private JButton btnNum6;
 	private JButton btnNum4;
-	private JTextField txtOperacio1;
-	private JTextField txtResultat;
-	private JButton btnNumEscollit1;
-	private JButton btnNumEscollit2;
-	private JButton btnNumEscollit3;
-	private JButton btnNumEscollit4;
-	private JButton btnNumEscollit5;
 	private JButton btnSuma;
 	private JButton btnResta;
 	private JButton btnMulti;
 	private JButton btnDiv;
+	private JLabel lblOperacion1;
+	private JLabel lblOperacion2;
+	private JLabel lblOperacion3;
+	private JLabel lblOperacion4;
+	private JLabel lblOperacion5;
+	private JButton btnNumEscogido1;
+	private JButton btnNumEscogido2;
+	private JButton btnNumEscogido3;
+	private JButton btnNumEscogido4;
+	private JButton btnNumEscogido5;
 
-	// Añadido por mí
 	private Random rand = new Random();
-	private int objectiu = 0;
+	private int numObjetivo = 0;
 	private int num1, num2 = 0;
-	private int numbtn1 = 0, numbtn2 = 0, numbtn3 = 0, numbtn4 = 0, numbtn5 = 0, numbtn6 = 0;
-	private int numResu1 = 0, numResu2 = 0, numResu3 = 0, numResu4 = 0, numResu5 = 0;
-	private boolean numbtn1act = false, numbtn2act = false, numbtn3act = false, numbtn4act = false, numbtn5act = false, numbtn6act = false;
-	private boolean numResu1act = false,  numResu2act = false,  numResu3act = false,  numResu4act = false,  numResu5act = false;
-	private int pasOperacio = 0;
-	private int numOperacio = 1;
+	private boolean btnNum1Act = false, btnNum2Act = false, btnNum3Act = false, btnNum4Act = false, btnNum5Act = false, btnNum6Act = false;
+	private boolean btnNumResu1Act = false,  btnNumResu2Act = false,  btnNumResu3Act = false,  btnNumResu4Act = false,  btnNumResu5Act = false;
+	private int pasoOperacion = 0; // Variable que nos servirá para determinar en qué punto de la operación nos encontramos
+	private int numOperacion = 1; // Variable que nos servirá para determinar en qué operación estamos
 	private char operador;
-	private int operacio = 0;
-	private JTextField txtOperacio2;
-	private JTextField txtOperacio3;
-	private JTextField txtOperacio4;
-	private JTextField txtOperacio5;
+	private int resultado = 0; // Variable que almacenará los resultados de las operaciones que realicemos
 	
 	/**
 	 * Launch the application.
@@ -68,8 +61,12 @@ public class main extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					main frame = new main();
+					frame = new main();
 					frame.setVisible(true);
+					frame.setResizable(false);
+					frame.setTitle("Número objetivo");
+					frame.setBounds(700, 200, 600, 600);
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -81,887 +78,534 @@ public class main extends JFrame {
 	 * Create the frame.
 	 */
 	public main() {
-		setResizable(false);
-		
-		setTitle("Xifres");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 399, 466);
+		// Inicializamos y asignamos el JPanel que va a contenerlo todo
 		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
+		// JLabel del número objetivo
+		lblObjetivo = new JLabel();
+		lblObjetivo.setText("Objetivo: ");
+		lblObjetivo.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblObjetivo.setForeground(Color.BLACK);
+		lblObjetivo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblObjetivo.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		lblObjetivo.setBounds(73, 85, 444, 23);
 		
-		txtObjectiu = new JTextField();
-		txtObjectiu.setHorizontalAlignment(SwingConstants.CENTER);
-		txtObjectiu.setEditable(false);
-		txtObjectiu.setForeground(Color.BLACK);
-		txtObjectiu.setFont(new Font("Tahoma", Font.BOLD, 11));
-		txtObjectiu.setText("Objectiu: ");
-		txtObjectiu.setBorder(null);
-		txtObjectiu.setColumns(10);
+		numObjetivo = rand.nextInt(900) + 100; // Generamos un número objetivo inicial entre 100 y 900
+		lblObjetivo.setText("Objetivo: "+numObjetivo); // Se lo asignamos al JLabel anteriormente inicializado
 		
+		// JButton para generar un nuevo número objetivo
+		btnNuevoNumero = new JButton("Nuevo número");
+		btnNuevoNumero.setBounds(73, 21, 207, 29);
+		btnNuevoNumero.setFont(new Font("Tahoma", Font.BOLD, 17));
 		
-		objectiu = rand.nextInt(899) + 100;
-		
-		txtObjectiu.setText("Objectiu: "+objectiu);
-		
-		JButton btnNouEnigme = new JButton("Nou enigma");
-		
-		btnNouEnigme.addMouseListener(new MouseAdapter() {
+		// Método ligado al JButton anterior
+		btnNuevoNumero.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-			
-				objectiu = rand.nextInt(899) + 100;
+				numObjetivo = rand.nextInt(900) + 100; // Número aleatorio entre 100 y 900
+				lblObjetivo.setText("Objetivo: "+numObjetivo);
 				
-				txtObjectiu.setText("Objectiu: "+objectiu);
+				// Asignamos números aleatorios a los seis botones
+				btnNum1 = btnNumRand(btnNum1);
+				btnNum2 = btnNumRand(btnNum2);
+				btnNum3 = btnNumRand(btnNum3);
+				btnNum4 = btnNumRand(btnNum4);				
+				btnNum5 = btnNumRand(btnNum5);
+				btnNum6 = btnNumRand(btnNum6);
 				
-				btnNum1.setEnabled(true);
-				btnNum2.setEnabled(true);
-				btnNum3.setEnabled(true);
-				btnNum4.setEnabled(true);
-				btnNum5.setEnabled(true);
-				btnNum6.setEnabled(true);
-				
-				num1 = 0;
-				num2 = 0;
-				operador = ' ';
-				
-				numbtn1 = numbtnrand(numbtn1);
-				btnNum1.setText(""+numbtn1);
-				
-				numbtn2 = numbtnrand(numbtn2);
-				btnNum2.setText(""+numbtn2);
-				
-				numbtn3 = numbtnrand(numbtn3);
-				btnNum3.setText(""+numbtn3);
-				
-				numbtn4 = numbtnrand(numbtn4);				
-				btnNum4.setText(""+numbtn4);
-				
-				numbtn5 = numbtnrand(numbtn5);
-				btnNum5.setText(""+numbtn5);
-				
-				numbtn6 = numbtnrand(numbtn6);
-				btnNum6.setText(""+numbtn6);
-				
-				numResu1 = 0;
-				numResu2 = 0;
-				numResu3 = 0;
-				numResu4 = 0;
-				numResu5 = 0;
-				
-				pasOperacio = 0;
-				numOperacio = 1;
-				operacio = 0;
-				
-				btnNumEscollit1.setText("?");
-				btnNumEscollit1.setEnabled(false);
-				
-				btnNumEscollit2.setText("?");
-				btnNumEscollit2.setEnabled(false);
-				
-				btnNumEscollit3.setText("?");
-				btnNumEscollit3.setEnabled(false);
-				
-				btnNumEscollit4.setText("?");
-				btnNumEscollit4.setEnabled(false);
-				
-				btnNumEscollit5.setText("?");
-				btnNumEscollit5.setEnabled(false);
-				
-				txtOperacio1.setText("-");
-				txtOperacio2.setText("-");
-				txtOperacio3.setText("-");
-				txtOperacio4.setText("-");
-				txtOperacio5.setText("-");
-				
-			}
-		});		
-		
-		JButton btnNetejaOperacions = new JButton("Neteja operacions");
-		btnNetejaOperacions.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				
-				txtObjectiu.setText("Objectiu: "+objectiu);
-				
-				btnNum1.setEnabled(true);
-				btnNum2.setEnabled(true);
-				btnNum3.setEnabled(true);
-				btnNum4.setEnabled(true);
-				btnNum5.setEnabled(true);
-				btnNum6.setEnabled(true);
-				
-				num1 = 0;
-				num2 = 0;
-				operador = ' ';
-				
-				numResu1 = 0;
-				numResu2 = 0;
-				numResu3 = 0;
-				numResu4 = 0;
-				numResu5 = 0;
-				
-				pasOperacio = 0;
-				numOperacio = 1;
-				operacio = 0;
-				
-				btnNumEscollit1.setText("?");
-				btnNumEscollit1.setEnabled(false);
-				
-				btnNumEscollit2.setText("?");
-				btnNumEscollit2.setEnabled(false);
-				
-				btnNumEscollit3.setText("?");
-				btnNumEscollit3.setEnabled(false);
-				
-				btnNumEscollit4.setText("?");
-				btnNumEscollit4.setEnabled(false);
-				
-				btnNumEscollit5.setText("?");
-				btnNumEscollit5.setEnabled(false);
-				
-				txtOperacio1.setText("-");
-				txtOperacio2.setText("-");
-				txtOperacio3.setText("-");
-				txtOperacio4.setText("-");
-				txtOperacio5.setText("-");
+				limpiarAplicacion();
 			}
 		});
 		
-	
+		// JButton que reinicia la partida sin cambiar el número objetivo
+		btnReiniciar = new JButton("Reiniciar operaciones");
+		btnReiniciar.setBounds(295, 21, 222, 29);
+		btnReiniciar.setFont(new Font("Tahoma", Font.BOLD, 17));
 		
+		// Método ligado al JButton anterior
+		btnReiniciar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				limpiarAplicacion();
+				lblObjetivo.setText("Objetivo: "+numObjetivo);
+			}
+		});
 		
 		// BOTÓN NÚMERO 1
 		btnNum1 = new JButton("");
+		btnNum1.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnNum1.setBounds(73, 139, 100, 40);
 		
-		numbtn1 = numbtnrand(numbtn1);
-		
-		btnNum1.setText(""+numbtn1);
+		btnNum1 = btnNumRand(btnNum1); // Número inicial aleatorio
 		
 		btnNum1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-		
-				if (btnNum1.isEnabled()==false) {
-		
+				if (!btnNum1.isEnabled())
 					return;
+
+				else if(pasoOperacion == 0) {
+					btnNum1Act = true;
+					pasoOperacion0(btnNum1, numOperacion);
 				}
 				
-				if(pasOperacio == 0) {
-				
-					numbtn1act = true;
-					
-					pasOperacio0(btnNum1, numbtn1, numOperacio);
-					
-				}
-				
-				if(pasOperacio == 2) {
-					
-					numbtn1act = true;
-					
-					pasOperacio2(btnNum1, numbtn1, operador, numOperacio);
-					
+				else if(pasoOperacion == 2) {
+					btnNum1Act = true;
+					pasoOperacion2(btnNum1, operador, numOperacion);
 				}
 			}
 		});
-		
 		
 		// BOTÓN NÚMERO 2
 		btnNum2 = new JButton("");
+		btnNum2.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnNum2.setBounds(73, 195, 100, 40);
 		
-		numbtn2 = numbtnrand(numbtn2);
-		
-		btnNum2.setText(""+numbtn2);
+		btnNum2 = btnNumRand(btnNum2);
 		
 		btnNum2.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-				if (btnNum2.isEnabled()==false) {
-					
+			public void mouseClicked(MouseEvent e) {				
+				if (!btnNum2.isEnabled())
 					return;
+
+				else if(pasoOperacion == 0) {
+					btnNum2Act = true;
+					pasoOperacion0(btnNum2, numOperacion);
 				}
 				
-				if(pasOperacio == 0) {
-					
-					numbtn2act = true;
-					
-					pasOperacio0(btnNum2, numbtn2, numOperacio);
-					
-				}
-				
-				
-				if(pasOperacio == 2) {
-				
-					numbtn2act = true;
-					
-					pasOperacio2(btnNum2, numbtn2, operador, numOperacio);
-					
+				else if(pasoOperacion == 2) {
+					btnNum2Act = true;
+					pasoOperacion2(btnNum2, operador, numOperacion);
 				}
 			}
 		});
 		
-		
 		// BOTÓN NÚMERO 3
 		btnNum3 = new JButton("");
+		btnNum3.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnNum3.setBounds(73, 251, 100, 40);
 		
-		numbtn3 = numbtnrand(numbtn3);
-		
-		btnNum3.setText(""+numbtn3);
+		btnNum3 = btnNumRand(btnNum3);
 		
 		btnNum3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				if (btnNum3.isEnabled()==false) {
-					
+				if (!btnNum3.isEnabled())
 					return;
+				
+				else if(pasoOperacion == 0) {
+					btnNum3Act = true;
+					pasoOperacion0(btnNum3, numOperacion);
 				}
 				
-				if(pasOperacio == 0) {
-					
-					numbtn3act = true;
-					
-					pasOperacio0(btnNum3, numbtn3, numOperacio);
-					
-				}
-				
-				
-				if(pasOperacio == 2) {
-					
-					numbtn3act = true;
-				
-					pasOperacio2(btnNum3, numbtn3, operador, numOperacio);
-					
+				else if(pasoOperacion == 2) {
+					btnNum3Act = true;
+					pasoOperacion2(btnNum3, operador, numOperacion);
 				}
 			}
 		});
 		
 		// BOTÓN NÚMERO 4
 		btnNum4 = new JButton("");
+		btnNum4.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnNum4.setBounds(73, 307, 100, 40);
 		
-		numbtn4 = numbtnrand(numbtn4);
-		
-		btnNum4.setText(""+numbtn4);
+		btnNum4 = btnNumRand(btnNum4);
 		
 		btnNum4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if (btnNum4.isEnabled()==false) {
-					
+				if (!btnNum4.isEnabled())
 					return;
+				
+				else if(pasoOperacion == 0) {
+					btnNum4Act = true;
+					pasoOperacion0(btnNum4, numOperacion);
 				}
 				
-				if(pasOperacio == 0) {
-					
-					numbtn4act = true;
-					
-					pasOperacio0(btnNum4, numbtn4, numOperacio);
-					
-				}
-				
-				
-				if(pasOperacio == 2) {
-				
-					numbtn4act = true;
-					
-					pasOperacio2(btnNum4, numbtn4, operador, numOperacio);
-			
+				else if(pasoOperacion == 2) {
+					btnNum4Act = true;
+					pasoOperacion2(btnNum4, operador, numOperacion);
 				}
 			}
 		});
-		
 		
 		// BOTÓN NÚMERO 5
 		btnNum5 = new JButton("");
+		btnNum5.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnNum5.setBounds(73, 363, 100, 40);
 		
-		numbtn5 = numbtnrand(numbtn5);
-		
-		btnNum5.setText(""+numbtn5);
+		btnNum5 = btnNumRand(btnNum5);
 		
 		btnNum5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if (btnNum5.isEnabled()==false) {
-					
+				if (!btnNum5.isEnabled())
 					return;
+
+				else if(pasoOperacion == 0) {
+					btnNum5Act = true;
+					pasoOperacion0(btnNum5, numOperacion);
 				}
 				
-				if(pasOperacio == 0) {
-					
-					numbtn5act = true;
-					
-					pasOperacio0(btnNum5, numbtn5, numOperacio);
-					
-				}
-				
-				
-				if(pasOperacio == 2) {
-				
-					numbtn5act = true;
-					
-					pasOperacio2(btnNum5, numbtn5, operador, numOperacio);
-					
+				else if(pasoOperacion == 2) {
+					btnNum5Act = true;
+					pasoOperacion2(btnNum5, operador, numOperacion);
 				}
 			}
 		});
-		
 		
 		// BOTÓN NÚMERO 6
 		btnNum6 = new JButton("");
+		btnNum6.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnNum6.setBounds(73, 419, 100, 40);
 		
-		numbtn6 = numbtnrand(numbtn6);
-		
-		btnNum6.setText(""+numbtn6);
+		btnNum6 = btnNumRand(btnNum6);
 		
 		btnNum6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if (btnNum6.isEnabled()==false) {
-					
+				if (!btnNum6.isEnabled())
 					return;
+
+				if(pasoOperacion == 0) {
+					btnNum6Act = true;
+					pasoOperacion0(btnNum6, numOperacion);
 				}
 				
-				if(pasOperacio == 0) {
-					
-					numbtn6act = true;
-					
-					pasOperacio0(btnNum6, numbtn6, numOperacio);
-					
-				}
-				
-				
-				if(pasOperacio == 2) {
-				
-					numbtn6act = true;
-					
-					pasOperacio2(btnNum6, numbtn6, operador, numOperacio);
-					
+				if(pasoOperacion == 2) {
+					btnNum6Act = true;
+					pasoOperacion2(btnNum6, operador, numOperacion);
 				}
 			}
 		});
 		
+		// JLabel en el que se ve la primera operación
+		lblOperacion1 = new JLabel();
+		lblOperacion1.setBounds(188, 154, 214, 14);
+		lblOperacion1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOperacion1.setText("-");
+		lblOperacion1.setForeground(Color.BLACK);
+		lblOperacion1.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblOperacion1.setBorder(null);
 		
-		 
-		txtOperacio1 = new JTextField();
-		txtOperacio1.setHorizontalAlignment(SwingConstants.CENTER);
-		txtOperacio1.setText("-");
-		txtOperacio1.setForeground(Color.BLACK);
-		txtOperacio1.setFont(new Font("Tahoma", Font.BOLD, 11));
-		txtOperacio1.setEditable(false);
-		txtOperacio1.setColumns(10);
-		txtOperacio1.setBorder(null);
-		
-		txtResultat = new JTextField();
-		txtResultat.setForeground(Color.BLACK);
-		txtResultat.setFont(new Font("Tahoma", Font.BOLD, 11));
-		txtResultat.setEditable(false);
-		txtResultat.setColumns(10);
-		txtResultat.setBorder(null);
-		
-		
-		// BOTÓN RESULTAT 1
-		btnNumEscollit1 = new JButton("?");
-		btnNumEscollit1.setEnabled(false);
+		// BOTÓN RESULTADO 1 (Botón que adopta el valor del resultado de la primera operación)
+		btnNumEscogido1 = new JButton("?");
+		btnNumEscogido1.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnNumEscogido1.setBounds(417, 139, 100, 40);
+		btnNumEscogido1.setEnabled(false);
 					
-		btnNumEscollit1.addActionListener(new ActionListener() {
+		btnNumEscogido1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-							
-				if (btnNumEscollit1.isEnabled()==false) {
-					
+				if (!btnNumEscogido1.isEnabled())
 					return;
+
+				else if(pasoOperacion == 0) {
+					btnNumResu1Act = true;
+					pasoOperacion0(btnNumEscogido1, numOperacion);
 				}
 				
-				if(pasOperacio == 0) {
-					
-					numResu1act = true;
-					
-					pasOperacio0(btnNumEscollit1, numResu1, numOperacio);
+				else if(pasoOperacion == 2) {
+					btnNumResu1Act = true;
+					pasoOperacion2(btnNumEscogido1, operador, numOperacion);
 				}
-				
-				
-				if(pasOperacio == 2) {
-					
-					numResu1act = true;
-					
-					pasOperacio2(btnNumEscollit1, numResu1, operador, numOperacio);
-					
-				}
-				
-				btnNumEscollit1.setEnabled(false);
+				btnNumEscogido1.setEnabled(false);
 			}
 		});
 		
+		// JLabel en el que se ve la segunda operación
+		lblOperacion2 = new JLabel();
+		lblOperacion2.setBounds(188, 210, 214, 14);
+		lblOperacion2.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOperacion2.setText("-");
+		lblOperacion2.setForeground(Color.BLACK);
+		lblOperacion2.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblOperacion2.setBorder(null);
 		
+		// BOTÓN RESULTADO 2 (Botón que adopta el valor del resultado de la segunda operación)
+		btnNumEscogido2 = new JButton("?");
+		btnNumEscogido2.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnNumEscogido2.setBounds(417, 195, 100, 40);
+		btnNumEscogido2.setEnabled(false);
 		
-		// BOTÓN RESULTAT 2
-		btnNumEscollit2 = new JButton("?");
-		btnNumEscollit2.setEnabled(false);
-		
-		btnNumEscollit2.addActionListener(new ActionListener() {
+		btnNumEscogido2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if(pasOperacio == 0) {
-					
-					numResu2act = true;
-					
-					pasOperacio0(btnNumEscollit2, numResu2, numOperacio);
-					
+				if(pasoOperacion == 0) {
+					btnNumResu2Act = true;
+					pasoOperacion0(btnNumEscogido2, numOperacion);
 				}
 				
-				
-				if(pasOperacio == 2) {
-					
-					numResu2act = true;
-				
-					pasOperacio2(btnNumEscollit2, numResu2, operador, numOperacio);			
+				else if(pasoOperacion == 2) {
+					btnNumResu2Act = true;
+					pasoOperacion2(btnNumEscogido2, operador, numOperacion);			
 				}
 			}
 		});
 		
+		// JLabel en el que se ve la tercera operación
+		lblOperacion3 = new JLabel();
+		lblOperacion3.setBounds(188, 266, 214, 14);
+		lblOperacion3.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOperacion3.setText("-");
+		lblOperacion3.setForeground(Color.BLACK);
+		lblOperacion3.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblOperacion3.setBorder(null);
 		
-		// BOTÓN RESULTAT 3
-		btnNumEscollit3 = new JButton("?");
-		btnNumEscollit3.setEnabled(false);
+		// BOTÓN RESULTADO 3 (Botón que adopta el valor del resultado de la tercera operación)
+		btnNumEscogido3 = new JButton("?");
+		btnNumEscogido3.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnNumEscogido3.setBounds(417, 251, 100, 40);
+		btnNumEscogido3.setEnabled(false);
 		
-		btnNumEscollit3.addActionListener(new ActionListener() {
+		btnNumEscogido3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if(pasOperacio == 0) {
-					
-					numResu3act = true;
-					
-					pasOperacio0(btnNumEscollit3, numResu3, numOperacio);
-					
+				if(pasoOperacion == 0) {
+					btnNumResu3Act = true;
+					pasoOperacion0(btnNumEscogido3, numOperacion);
 				}
 				
-				
-				if(pasOperacio == 2) {
-				
-					numResu3act = true;
-					
-					pasOperacio2(btnNumEscollit3, numResu3, operador, numOperacio);			
+				else if(pasoOperacion == 2) {
+					btnNumResu3Act = true;
+					pasoOperacion2(btnNumEscogido3, operador, numOperacion);			
 				}
 			}
 		});
 		
+		// JLabel en el que se ve la cuarta operación
+		lblOperacion4 = new JLabel();
+		lblOperacion4.setBounds(186, 322, 214, 14);
+		lblOperacion4.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOperacion4.setText("-");
+		lblOperacion4.setForeground(Color.BLACK);
+		lblOperacion4.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblOperacion4.setBorder(null);
 		
-		// BOTÓN RESULTAT 4
-		btnNumEscollit4 = new JButton("?");
-		btnNumEscollit4.setEnabled(false);
+		// BOTÓN RESULTADO 4 (Botón que adopta el valor del resultado de la cuarta operación)
+		btnNumEscogido4 = new JButton("?");
+		btnNumEscogido4.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnNumEscogido4.setBounds(417, 307, 100, 40);
+		btnNumEscogido4.setEnabled(false);
 		
-		btnNumEscollit4.addActionListener(new ActionListener() {
+		btnNumEscogido4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if(pasOperacio == 0) {
-					
-					numResu4act = true;
-					
-					pasOperacio0(btnNumEscollit4, numResu4, numOperacio);
-					
+				if(pasoOperacion == 0) {
+					btnNumResu4Act = true;
+					pasoOperacion0(btnNumEscogido4, numOperacion);
 				}
 				
-				
-				if(pasOperacio == 2) {
-				
-					numResu4act = true;
-					
-					pasOperacio2(btnNumEscollit4, numResu4, operador, numOperacio);			
+				else if(pasoOperacion == 2) {
+					btnNumResu4Act = true;
+					pasoOperacion2(btnNumEscogido4, operador, numOperacion);			
 				}
 			}
 		});
 		
+		// JLabel en el que se ve la quinta y última operación
+		lblOperacion5 = new JLabel();
+		lblOperacion5.setBounds(188, 378, 214, 14);
+		lblOperacion5.setHorizontalAlignment(SwingConstants.CENTER);
+		lblOperacion5.setText("-");
+		lblOperacion5.setForeground(Color.BLACK);
+		lblOperacion5.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblOperacion5.setBorder(null);
 		
-		// BOTÓN RESULTAT 5
-		btnNumEscollit5 = new JButton("?");
-		btnNumEscollit5.setEnabled(false);
+		// BOTÓN RESULTADO 5 (Botón que adopta el valor del resultado de la quinta y última operación)
+		btnNumEscogido5 = new JButton("?");
+		btnNumEscogido5.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnNumEscogido5.setBounds(417, 363, 100, 40);
+		btnNumEscogido5.setEnabled(false);
 		
-		btnNumEscollit5.addActionListener(new ActionListener() {
+		btnNumEscogido5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				if(pasOperacio == 0) {
-					
-					numResu5act = true;
-					
-					pasOperacio0(btnNumEscollit5, numResu5, numOperacio);
+				if(pasoOperacion == 0) {
+					btnNumResu5Act = true;
+					pasoOperacion0(btnNumEscogido5, numOperacion);
 				}
 				
-				
-				if(pasOperacio == 2) {
-				
-					numResu5act = true;
-					
-					pasOperacio2(btnNumEscollit5, numResu5, operador, numOperacio);			
+				else if(pasoOperacion == 2) {
+					btnNumResu5Act = true;
+					pasoOperacion2(btnNumEscogido5, operador, numOperacion);			
 				}
 			}
 		});
 		
-		
+		// Los operadores solo responden si "pasoOperacion == 1", es decir, si ya se ha seleccionado el primer número.
 		// BOTÓN SUMA
 		btnSuma = new JButton("+");
+		btnSuma.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnSuma.setBounds(73, 499, 100, 40);
 		
 		btnSuma.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				
-				if(pasOperacio == 0) {
-				
-				}
-				
-				else if(pasOperacio == 1) {
-					
+			public void mouseClicked(MouseEvent e) {				
+				if(pasoOperacion == 1) {
 					operador = '+';
-					
-					numOperacio(num1, operador, 0, pasOperacio, numOperacio);
-					
-					pasOperacio = 2;
-					
+					numOperacion(num1, operador, 0, pasoOperacion, numOperacion);
+					pasoOperacion = 2;
 				}
 			}
 		});
 		
-		
 		// BOTÓN RESTA
 		btnResta = new JButton("-");
+		btnResta.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnResta.setBounds(188, 499, 100, 40);
 		
 		btnResta.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
-				if(pasOperacio == 0) {
-				
-				}
-				
-				else if(pasOperacio == 1) {
-					
+				if(pasoOperacion == 1) {
 					operador = '-';
-					
-					numOperacio(num1, operador, 0, pasOperacio, numOperacio);
-					
-					pasOperacio = 2;
-					
+					numOperacion(num1, operador, 0, pasoOperacion, numOperacion);
+					pasoOperacion = 2;
 				}
 			}
 		});
 		
-		
 		// BOTÓN MULTI
 		btnMulti = new JButton("*");
+		btnMulti.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnMulti.setBounds(302, 499, 100, 40);
 		
 		btnMulti.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
-				if(pasOperacio == 0) {
-				
-				}
-				
-				else if(pasOperacio == 1) {
-					
+				if(pasoOperacion == 1) {
 					operador = '*';
-					
-					numOperacio(num1, operador, 0, pasOperacio, numOperacio);
-					
-					pasOperacio = 2;
-					
+					numOperacion(num1, operador, 0, pasoOperacion, numOperacion);
+					pasoOperacion = 2;
 				}
 			}
 		});
 		
 		// BOTÓN DIVI
 		btnDiv = new JButton("/");
+		btnDiv.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnDiv.setBounds(417, 499, 100, 40);
 		
 		btnDiv.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
-				if(pasOperacio == 0) {
-				
-				}
-				
-				else if(pasOperacio == 1) {
-					
+				if(pasoOperacion == 1) {
 					operador = '/';
-					
-					numOperacio(num1, operador, 0, pasOperacio, numOperacio);
-					
-					pasOperacio = 2;
-					
+					numOperacion(num1, operador, 0, pasoOperacion, numOperacion);
+					pasoOperacion = 2;
 				}
 			}
 		});
 		
-		txtOperacio2 = new JTextField();
-		txtOperacio2.setHorizontalAlignment(SwingConstants.CENTER);
-		txtOperacio2.setText("-");
-		txtOperacio2.setForeground(Color.BLACK);
-		txtOperacio2.setFont(new Font("Tahoma", Font.BOLD, 11));
-		txtOperacio2.setEditable(false);
-		txtOperacio2.setColumns(10);
-		txtOperacio2.setBorder(null);
-		
-		txtOperacio3 = new JTextField();
-		txtOperacio3.setHorizontalAlignment(SwingConstants.CENTER);
-		txtOperacio3.setText("-");
-		txtOperacio3.setForeground(Color.BLACK);
-		txtOperacio3.setFont(new Font("Tahoma", Font.BOLD, 11));
-		txtOperacio3.setEditable(false);
-		txtOperacio3.setColumns(10);
-		txtOperacio3.setBorder(null);
-		
-		txtOperacio4 = new JTextField();
-		txtOperacio4.setHorizontalAlignment(SwingConstants.CENTER);
-		txtOperacio4.setText("-");
-		txtOperacio4.setForeground(Color.BLACK);
-		txtOperacio4.setFont(new Font("Tahoma", Font.BOLD, 11));
-		txtOperacio4.setEditable(false);
-		txtOperacio4.setColumns(10);
-		txtOperacio4.setBorder(null);
-		
-		txtOperacio5 = new JTextField();
-		txtOperacio5.setHorizontalAlignment(SwingConstants.CENTER);
-		txtOperacio5.setText("-");
-		txtOperacio5.setForeground(Color.BLACK);
-		txtOperacio5.setFont(new Font("Tahoma", Font.BOLD, 11));
-		txtOperacio5.setEditable(false);
-		txtOperacio5.setColumns(10);
-		txtOperacio5.setBorder(null);
-		
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING, false)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(43)
-							.addComponent(btnSuma, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnResta, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnMulti, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnDiv, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(54)
-							.addComponent(btnNouEnigme, GroupLayout.PREFERRED_SIZE, 119, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addComponent(btnNetejaOperacions, GroupLayout.PREFERRED_SIZE, 154, GroupLayout.PREFERRED_SIZE)
-							.addGap(8))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addContainerGap()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnNum1, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnNum2, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnNum3, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnNum4, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnNum5, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnNum6, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE))
-							.addGap(55)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addGroup(gl_contentPane.createSequentialGroup()
-											.addComponent(txtOperacio1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-											.addGap(27)
-											.addComponent(txtResultat, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
-										.addComponent(txtOperacio4, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
-										.addComponent(txtOperacio2, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
-										.addComponent(txtOperacio3, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addComponent(btnNumEscollit2, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-										.addComponent(btnNumEscollit1, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-										.addComponent(btnNumEscollit3, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-										.addComponent(btnNumEscollit4, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)
-										.addComponent(btnNumEscollit5, GroupLayout.PREFERRED_SIZE, 70, GroupLayout.PREFERRED_SIZE)))
-								.addComponent(txtOperacio5, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE))))
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap(152, Short.MAX_VALUE)
-					.addComponent(txtObjectiu, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
-					.addGap(123))
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnNouEnigme)
-						.addComponent(btnNetejaOperacions))
-					.addGap(18)
-					.addComponent(txtObjectiu, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-								.addComponent(btnNum1, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-								.addComponent(txtResultat, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)
-								.addComponent(txtOperacio1, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-								.addComponent(btnNum2, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-								.addComponent(txtOperacio2, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(btnNum3, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnNum4, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED))
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(txtOperacio3, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)
-									.addGap(39)))
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addComponent(btnNum5, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-										.addComponent(btnNum6, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-										.addComponent(txtOperacio5, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)))
-								.addComponent(txtOperacio4, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(btnNumEscollit1, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnNumEscollit2, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnNumEscollit3, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnNumEscollit4, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnNumEscollit5, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)))
-					.addPreferredGap(ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnDiv, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnMulti, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnResta, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnSuma, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)))
-		);
-		contentPane.setLayout(gl_contentPane);
+		// Añadimos todos los elementos al JPanel
+		contentPane.setLayout(null);
+		contentPane.add(btnSuma);
+		contentPane.add(btnResta);
+		contentPane.add(btnMulti);
+		contentPane.add(btnDiv);
+		contentPane.add(btnNum1);
+		contentPane.add(btnNum2);
+		contentPane.add(btnNum3);
+		contentPane.add(btnNum4);
+		contentPane.add(btnNum5);
+		contentPane.add(btnNum6);
+		contentPane.add(lblOperacion1);
+		contentPane.add(lblOperacion4);
+		contentPane.add(lblOperacion2);
+		contentPane.add(lblOperacion3);
+		contentPane.add(btnNumEscogido2);
+		contentPane.add(btnNumEscogido1);
+		contentPane.add(btnNumEscogido3);
+		contentPane.add(btnNumEscogido4);
+		contentPane.add(btnNumEscogido5);
+		contentPane.add(lblOperacion5);
+		contentPane.add(lblObjetivo);
+		contentPane.add(btnNuevoNumero);
+		contentPane.add(btnReiniciar);
 	}
 	
-	public int numbtnrand(int num) {
+	// Método con el que le asignamos un valor aleatorio al botón que enviemos por parámetro
+	public JButton btnNumRand(JButton button) {
+		int num = rand.nextInt(5) + 1;
 		
-		int numopcio = rand.nextInt(5) + 1;
-		
-		switch(numopcio) {
-		
-			case 1:
-				num = rand.nextInt(10) + 1;
-				break;
-		
-			case 2:
-				num = 25;
-				break;
-		
-			case 3:
-				num = 50;
-				break;
-		
-			case 4:
-				num = 75;
-				break;
-			
-			case 5:
-				num = 100;
-				break;
-		
+		switch(num) {
+			case 1:	button.setText(String.valueOf(rand.nextInt(10) + 1));
+					break;
+			case 2:	button.setText(String.valueOf(25));
+					break;
+			case 3:	button.setText(String.valueOf(50));				
+					break;
+			case 4: button.setText(String.valueOf(75));
+					break;
+			case 5:	button.setText(String.valueOf(100));
+					break;
 		}
-		
-		return num;
+		return button;
 	}
 	
-	public void pasOperacio0(JButton btnNum, int numbtn, int numOperacio) {
+	// Método al que llamamos tras seleccionar el primer número
+	public void pasoOperacion0(JButton btnNum, int numOperacion) {
+		num1 = Integer.parseInt(btnNum.getText()); // Recogemos el número del JButton enviado por parámetro
 		
-		num1 = numbtn;
-		
-		numOperacio(num1, ' ', 0, pasOperacio, numOperacio);
+		numOperacion(num1, ' ', 0, pasoOperacion, numOperacion); // Enviamos el número y el paso al método "numOperacion()"
 			
-		btnNum.setEnabled(false);
-			
-		pasOperacio = 1;
-		
-		
+		btnNum.setEnabled(false); // Deshabilitamos el botón
+
+		pasoOperacion = 1; // Ahora "pasoOperacion" pasa a tener valor "1" y queda a la espera del operador 
 	}
 
-
-	public void pasOperacio2(JButton btnNum, int numbtn, char operador, int numOperacio) {
+	// Método al que llamamos tras seleccionar el segundo número
+	public void pasoOperacion2(JButton btnNum, char operador, int numOperacion) {
+		num2 = Integer.parseInt(btnNum.getText());
 		
-		num2 = numbtn;
-		
-		if(operador == '+') {
-			operacio = num1 + num2;
+		// Según el operador que le pasemos por parámetro, realizaremos una operación u otra
+		switch(operador) {
+			case '+':	resultado = num1 + num2;
+						break;
+			case '-':	resultado = num1 - num2;
+						break;
+			case '*':	resultado = num1 * num2;
+						break;
+			case '/':	resultado = num1 / num2;
+						break;
 		}
 		
-		else if(operador == '-') {
-			operacio = num1 - num2;
-		}
-		
-		else if(operador == '*') {
-			operacio = num1 * num2;
-		}
-		
-		else if(operador == '/') {
-			operacio = num1 / num2;
-		}
-		
-		if(operacio < 0 || operador == '/' && num1 % num2 != 0) {
-			pasOperacio = 3;
-			numOperacio(num1, operador, num2, pasOperacio, numOperacio);
+		// Si el resultado es negativo o se trata de una división que no devuelve 0, se cancela operación
+		if(resultado < 0 || operador == '/' && num1 % num2 != 0) {
+			pasoOperacion = 3;
+			numOperacion(num1, operador, num2, pasoOperacion, numOperacion);
 			
-			if(numbtn1act == true) {
+			// Rehabilitamos aquellos botones que usamos para la operación
+			if(btnNum1Act == true)
 				btnNum1.setEnabled(true);
-			}
-			
-			if(numbtn2act == true) {
+			if(btnNum2Act == true)
 				btnNum2.setEnabled(true);
-			}
-			
-			if(numbtn3act == true) {
+			if(btnNum3Act == true)
 				btnNum3.setEnabled(true);
-			}
-			
-			if(numbtn4act == true) {
+			if(btnNum4Act == true)
 				btnNum4.setEnabled(true);
-			}
-			
-			if(numbtn5act == true) {
+			if(btnNum5Act == true)
 				btnNum5.setEnabled(true);
-			}
-			
-			if(numbtn6act == true) {
+			if(btnNum6Act == true)
 				btnNum6.setEnabled(true);
-			}
+			if(btnNumResu1Act == true)
+				btnNumEscogido1.setEnabled(true);			
+			if(btnNumResu2Act == true)
+				btnNumEscogido2.setEnabled(true);
+			if(btnNumResu3Act == true)
+				btnNumEscogido3.setEnabled(true);
+			if(btnNumResu4Act == true)
+				btnNumEscogido4.setEnabled(true);
+			if(btnNumResu5Act == true)
+				btnNumEscogido5.setEnabled(true);
 
-			if(numResu1act == true) {
-				btnNumEscollit1.setEnabled(true);
-			}
-			
-			if(numResu2act == true) {
-				btnNumEscollit2.setEnabled(true);
-			}
-			
-			if(numResu3act == true) {
-				btnNumEscollit3.setEnabled(true);
-			}
-			
-			if(numResu4act == true) {
-				btnNumEscollit4.setEnabled(true);
-			}
-			
-			if(numResu5act == true) {
-				btnNumEscollit5.setEnabled(true);
-			}
-			
+			// Los números, operador y paso de la operación vuelven a su estado original
 			num1 = 0;
 			num2 = 0;
-			
-			pasOperacio = 0;
+			this.operador = ' ';
+			pasoOperacion = 0;
 		}
 		
-		else if(operacio == objectiu) {
-			txtObjectiu.setText("S'ha assolit l'objectiu!");
+		// Si alcanzamos el número objetivo, se deshabilitan todos los botones y la aplicación queda a la espera de que pulses "Nuevo número" o "Reiniciar aplicación"
+		else if(resultado == numObjetivo) {
+			lblObjetivo.setText("¡Has alcanzado el número objetivo!");
 			
-			numOperacio(num1, operador, num2, pasOperacio, numOperacio);
+			numOperacion(num1, operador, num2, pasoOperacion, numOperacion);
 			
 			btnNum1.setEnabled(false);
 			btnNum2.setEnabled(false);
@@ -969,11 +613,11 @@ public class main extends JFrame {
 			btnNum4.setEnabled(false);
 			btnNum5.setEnabled(false);
 			btnNum6.setEnabled(false);
-			btnNumEscollit1.setEnabled(false);
-			btnNumEscollit2.setEnabled(false);
-			btnNumEscollit3.setEnabled(false);
-			btnNumEscollit4.setEnabled(false);
-			btnNumEscollit5.setEnabled(false);
+			btnNumEscogido1.setEnabled(false);
+			btnNumEscogido2.setEnabled(false);
+			btnNumEscogido3.setEnabled(false);
+			btnNumEscogido4.setEnabled(false);
+			btnNumEscogido5.setEnabled(false);
 			btnSuma.setEnabled(false);
 			btnResta.setEnabled(false);
 			btnMulti.setEnabled(false);
@@ -981,218 +625,232 @@ public class main extends JFrame {
 		}
 		
 		else {
+			numOperacion(num1, operador, num2, pasoOperacion, numOperacion);
 		
-		numOperacio(num1, operador, num2, pasOperacio, numOperacio);
-		
-		btnNum.setEnabled(false);
+			btnNum.setEnabled(false);
 
-		pasOperacio = 0;
-		
+			pasoOperacion = 0;
 		}
 		
 	}
 	
-	public void numOperacio(int num1, char operador, int num2, int pasOperacio, int numOperacio) {
-		
-		if(numOperacio == 1) {
-			
-			if(pasOperacio == 0) {
-				txtOperacio1.setText(num1 + " ");
+	// Método que gestiona la operación por la que vamos y según esta, imprime las operaciones en un JLabel u otro
+	public void numOperacion(int num1, char operador, int num2, int pasoOperacion, int numOperacion) {
+		if(numOperacion == 1) {
+			if(pasoOperacion == 0) {
+				lblOperacion1.setText(num1 + " ");
 			}
 			
-			else if(pasOperacio == 1) {
-				txtOperacio1.setText(num1 +" "+ operador+" ");
+			else if(pasoOperacion == 1) {
+				lblOperacion1.setText(num1 +" "+ operador+" ");
 			}
 			
-			else if(pasOperacio == 2) {
+			else if(pasoOperacion == 2) {
+				lblOperacion1.setText(num1 +" "+ operador+" "+num2+" = "+resultado);
 				
-				txtOperacio1.setText(num1 +" "+ operador+" "+num2+" = "+operacio);
+				btnNumEscogido1.setText(String.valueOf(resultado));
+				btnNumEscogido1.setEnabled(true);
 				
-				numResu1 = operacio;
-				
-				btnNumEscollit1.setText(""+numResu1);
-				
-				btnNumEscollit1.setEnabled(true);
-				
-				this.pasOperacio = 0;
-				
-				this.numOperacio = 2;
+				this.pasoOperacion = 0;
+				this.numOperacion = 2;
 			
-				numbtn1act = false;				
-				numbtn2act = false;
-				numbtn3act = false;
-				numbtn4act = false;
-				numbtn5act = false;
-				numbtn6act = false;
-				
+				btnNum1Act = false;
+				btnNum2Act = false;
+				btnNum3Act = false;
+				btnNum4Act = false;
+				btnNum5Act = false;
+				btnNum6Act = false;
 			}
 			
-			else if(pasOperacio == 3) {
-				txtOperacio1.setText("Operació no vàlida.");
+			else if(pasoOperacion == 3) {
+				lblOperacion1.setText("Operación no válida.");
 			}
 		}
 		
-		
-		else if(numOperacio == 2) {
-			
-			if(pasOperacio == 0) {
-				txtOperacio2.setText(num1 + " ");
+		else if(numOperacion == 2) {
+			if(pasoOperacion == 0) {
+				lblOperacion2.setText(num1 + " ");
 			}
 			
-			else if(pasOperacio == 1) {
-				txtOperacio2.setText(num1 +" "+ operador+" ");
+			else if(pasoOperacion == 1) {
+				lblOperacion2.setText(num1 +" "+ operador+" ");
 			}
 			
-			else if(pasOperacio == 2) {
+			else if(pasoOperacion == 2) {
+				lblOperacion2.setText(num1 +" "+ operador+" "+num2+" = "+resultado);
 				
-				txtOperacio2.setText(num1 +" "+ operador+" "+num2+" = "+operacio);
+				btnNumEscogido2.setText(String.valueOf(resultado));
+				btnNumEscogido2.setEnabled(true);
 				
-				numResu2 = operacio;
+				this.pasoOperacion = 0;
+				this.numOperacion = 3;
 				
-				btnNumEscollit2.setText(""+numResu2);
+				btnNum1Act = false;				
+				btnNum2Act = false;
+				btnNum3Act = false;
+				btnNum4Act = false;
+				btnNum5Act = false;
+				btnNum6Act = false;
 				
-				btnNumEscollit2.setEnabled(true);
-				
-				this.pasOperacio = 0;
-				
-				this.numOperacio = 3;
-				
-				numbtn1act = false;				
-				numbtn2act = false;
-				numbtn3act = false;
-				numbtn4act = false;
-				numbtn5act = false;
-				numbtn6act = false;
-				
-				numResu1act = false;
+				btnNumResu1Act = false;
 			}
 			
-			else if(pasOperacio == 3) {
-				txtOperacio2.setText("Operació no vàlida.");
+			else if(pasoOperacion == 3) {
+				lblOperacion2.setText("Operación no válida.");
 			}
 		}
 		
-		else if(numOperacio == 3) {
-			
-			if(pasOperacio == 0) {
-				txtOperacio3.setText(num1 + " ");
+		else if(numOperacion == 3) {
+			if(pasoOperacion == 0) {
+				lblOperacion3.setText(num1 + " ");
 			}
 			
-			else if(pasOperacio == 1) {
-				txtOperacio3.setText(num1 +" "+ operador+" ");
+			else if(pasoOperacion == 1) {
+				lblOperacion3.setText(num1 +" "+ operador+" ");
 			}
 			
-			else if(pasOperacio == 2) {
-				txtOperacio3.setText(num1 +" "+ operador+" "+num2+" = "+operacio);
+			else if(pasoOperacion == 2) {
+				lblOperacion3.setText(num1 +" "+ operador+" "+num2+" = "+resultado);
 				
-				numResu3 = operacio;
+				btnNumEscogido3.setText(String.valueOf(resultado));
+				btnNumEscogido3.setEnabled(true);
 				
-				btnNumEscollit3.setText(""+numResu3);
+				this.pasoOperacion = 0;
+				this.numOperacion = 4;
 				
-				btnNumEscollit3.setEnabled(true);
+				btnNum1Act = false;				
+				btnNum2Act = false;
+				btnNum3Act = false;
+				btnNum4Act = false;
+				btnNum5Act = false;
+				btnNum6Act = false;
 				
-				this.pasOperacio = 0;
-				
-				this.numOperacio = 4;
-				
-				numbtn1act = false;				
-				numbtn2act = false;
-				numbtn3act = false;
-				numbtn4act = false;
-				numbtn5act = false;
-				numbtn6act = false;
-				
-				numResu1act = false;
-				numResu2act = false;
+				btnNumResu1Act = false;
+				btnNumResu2Act = false;
 			}
 			
-			else if(pasOperacio == 3) {
-				txtOperacio3.setText("Operació no vàlida.");
+			else if(pasoOperacion == 3) {
+				lblOperacion3.setText("Operación no válida.");
 			}
 		}
 		
-		else if(numOperacio == 4) {
-			
-			if(pasOperacio == 0) {
-				txtOperacio4.setText(num1 + " ");
+		else if(numOperacion == 4) {
+			if(pasoOperacion == 0) {
+				lblOperacion4.setText(num1 + " ");
 			}
 			
-			else if(pasOperacio == 1) {
-				txtOperacio4.setText(num1 +" "+ operador+" ");
+			else if(pasoOperacion == 1) {
+				lblOperacion4.setText(num1 +" "+ operador+" ");
 			}
 			
-			else if(pasOperacio == 2) {
-				txtOperacio4.setText(num1 +" "+ operador+" "+num2+" = "+operacio);
+			else if(pasoOperacion == 2) {
+				lblOperacion4.setText(num1 +" "+ operador+" "+num2+" = "+resultado);
 				
-				numResu4 = operacio;
+				btnNumEscogido4.setText(String.valueOf(resultado));
+				btnNumEscogido4.setEnabled(true);
 				
-				btnNumEscollit4.setText(""+numResu4);
+				this.pasoOperacion = 0;
+				this.numOperacion = 5;
 				
-				btnNumEscollit4.setEnabled(true);
+				btnNum1Act = false;				
+				btnNum2Act = false;
+				btnNum3Act = false;
+				btnNum4Act = false;
+				btnNum5Act = false;
+				btnNum6Act = false;
 				
-				this.pasOperacio = 0;
-				
-				this.numOperacio = 5;
-				
-				numbtn1act = false;				
-				numbtn2act = false;
-				numbtn3act = false;
-				numbtn4act = false;
-				numbtn5act = false;
-				numbtn6act = false;
-				
-				numResu1act = false;
-				numResu2act = false;
-				numResu3act = false;
+				btnNumResu1Act = false;
+				btnNumResu2Act = false;
+				btnNumResu3Act = false;
 			}
 			
-			else if(pasOperacio == 3) {
-				txtOperacio4.setText("Operació no vàlida.");
+			else if(pasoOperacion == 3) {
+				lblOperacion4.setText("Operación no válida.");
 			}
 		}
 		
-		else if(numOperacio == 5) {
+		else if(numOperacion == 5) {
+			if(pasoOperacion == 0) {
+				lblOperacion5.setText(num1 + " ");
+			}
+			
+			else if(pasoOperacion == 1) {
+				lblOperacion5.setText(num1 +" "+ operador+" ");
+			}
+			
+			else if(pasoOperacion == 2) {
+				lblOperacion5.setText(num1 +" "+ operador+" "+num2+" = "+resultado);
+				
+				btnNumEscogido5.setText(String.valueOf(resultado));
+				
+				lblObjetivo.setText("Te has quedado sin números...");
+				
+				this.pasoOperacion = 0;
+				this.numOperacion = 6;
+				
+				btnNum1Act = false;				
+				btnNum2Act = false;
+				btnNum3Act = false;
+				btnNum4Act = false;
+				btnNum5Act = false;
+				btnNum6Act = false;
+				
+				btnNumResu1Act = false;
+				btnNumResu2Act = false;
+				btnNumResu3Act = false;
+				btnNumResu4Act = false;
+				btnNumResu5Act = false;
+			}
+			
+			else if(pasoOperacion == 3) {
+				lblOperacion5.setText("Operación no válida.");
+			}
+		}
+	}
 	
-			if(pasOperacio == 0) {
-				txtOperacio5.setText(num1 + " ");
-			}
-			
-			else if(pasOperacio == 1) {
-				txtOperacio5.setText(num1 +" "+ operador+" ");
-			}
-			
-			else if(pasOperacio == 2) {
-				txtOperacio5.setText(num1 +" "+ operador+" "+num2+" = "+operacio);
-				
-				numResu5 = operacio;
-				
-				btnNumEscollit5.setText(""+numResu5);
-				
-				txtObjectiu.setText("S'han esgotat els números...");
-				
-				btnNumEscollit5.setEnabled(true);
-				
-				this.pasOperacio = 0;
-				
-				this.numOperacio = 6;
-				
-				numbtn1act = false;				
-				numbtn2act = false;
-				numbtn3act = false;
-				numbtn4act = false;
-				numbtn5act = false;
-				numbtn6act = false;
-				
-				numResu1act = false;
-				numResu2act = false;
-				numResu3act = false;
-				numResu4act = false;
-			}
-			
-			else if(pasOperacio == 3) {
-				txtOperacio5.setText("Operació no vàlida.");
-			}
-		}
+	private void limpiarAplicacion() {
+		// Habilita todos los números y operadores
+		btnNum1.setEnabled(true);
+		btnNum2.setEnabled(true);
+		btnNum3.setEnabled(true);
+		btnNum4.setEnabled(true);
+		btnNum5.setEnabled(true);
+		btnNum6.setEnabled(true);
+		btnSuma.setEnabled(true);
+		btnResta.setEnabled(true);
+		btnMulti.setEnabled(true);
+		btnDiv.setEnabled(true);
 		
+		// Limpia todas las variables y regresa al primer paso
+		num1 = 0;
+		num2 = 0;
+		operador = ' ';
+		
+		pasoOperacion = 0;
+		numOperacion = 1;
+		resultado = 0;
+		
+		// Limpia todos los números resultantes
+		btnNumEscogido1.setText("?");
+		btnNumEscogido1.setEnabled(false);
+		
+		btnNumEscogido2.setText("?");
+		btnNumEscogido2.setEnabled(false);
+		
+		btnNumEscogido3.setText("?");
+		btnNumEscogido3.setEnabled(false);
+		
+		btnNumEscogido4.setText("?");
+		btnNumEscogido4.setEnabled(false);
+		
+		btnNumEscogido5.setText("?");
+		btnNumEscogido5.setEnabled(false);
+		
+		// Limpia todas las operaciones
+		lblOperacion1.setText("-");
+		lblOperacion2.setText("-");
+		lblOperacion3.setText("-");
+		lblOperacion4.setText("-");
+		lblOperacion5.setText("-");
 	}
 }
