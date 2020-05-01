@@ -31,7 +31,8 @@ public class Agenda {
 		return eliminado;
 	}
 	
-	public Contacto buscar(String nombre, String apellido) { // Primero el método para buscar al contacto		
+	// Primero el método para buscar al contacto
+	public Contacto buscar(String nombre, String apellido) {		
 		Contacto c = new Contacto(nombre, apellido, "", null);
 		
 		Contacto busqueda = null;
