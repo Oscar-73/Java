@@ -1,6 +1,4 @@
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -17,131 +15,121 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.Timer;
 
-public class controls extends JPanel implements KeyListener, ActionListener { // Amb aquestes dues implementacions, fem que el programa pugui rebre per teclat
-	
+// Implementando estas dos interfaces, hacemos que el programa detecte pulsaciones por teclado
+public class Controles extends JPanel implements KeyListener, ActionListener {
 	private static final String EXIT_ON_CLOSE = null;
-	String color; // Variable que rep el seu valor per paràmetre desde opcions i amb la qual seleccionem el color de la serp
-	boolean carnivora = false, vegetariana = false, omnivora = false; // Variables boolean que determinarán el menjar que sortirà
 	
-	int num = 0; // Valor random que harà aparèixer un menjar o altre	
+	// Variables que recibirán su valor con lo configurado en OpcionesIniciales
+	String color, nombreJugador;
+	boolean carnivora = false, vegetariana = false, omnivora = false;
 	
-	private BufferedImage img = null; // Variable amb la que agafem la imatge
-	private Image imgres; // Variable amb la que redimensionem la imatge
+	int num = 0; // Valor aleatorio que decidirá la comida	
 	
-	private int puntuacio = 0; // Variable que controla la puntuació del jugador
-	private String nomjugador; // Variable que conté el nom del jugador
+	private BufferedImage imgFondo = null; // Imagen de fondo
+	private Image imgFondoRes; // Imagen de fondo redimensionada
+	
+	private int puntuacion = 0; // Variable que controla la puntuación del jugador	
 	
 	private static Clip clip; // Fem la variable clip global perque així, al reiniciar la partida, poguem parar la música des d'un altre mètode 
 	private static Clip clipfi;
 	
-	// Mida serp
+	// Medidas serpiente
 	private int[] longXserp = new int[750];
 	private int[] longYserp = new int[750];
 	
-	// Longitut inicial de la serp
+	// Longitud inicial de la serpiente
 	private int serplong = 3;
 	
-	// Moviments que fem
+	// Variable que almacena el número de movimientos que hagamos
 	private int moviments = 0;
 	
-	// Controls
-	private boolean esquerra = false;
-	private boolean dreta = false;
-	private boolean amunt = false;
-	private boolean avall = false;
+	// Controles
+	private boolean izquierda = false;
+	private boolean derecha = false;
+	private boolean arriba = false;
+	private boolean abajo = false;
 	
-	// Gràfics de moviment
-	private ImageIcon serpesquerra;
-	private ImageIcon serpdreta;
-	private ImageIcon serpamunt;
-	private ImageIcon serpavall;
+	// Gráficos de movimiento
+	private ImageIcon serpIzquierda;
+	private ImageIcon serpDerecha;
+	private ImageIcon serpArriba;
+	private ImageIcon serpAbajo;
 	
-	private Timer timer;
-	private int velocitatserp = 100;
+	private Timer timer; // Variable que funciona como "background thread" y usaremos para refrescar los gráficos de la serpiente, logrando que esta se mueva
+	private int velocidadSerp = 100; // Usaremos esta variable para ajustar la velocidad de refresco del Timer y a su vez, la velocidad de movimiento de la serpiente
 	private ImageIcon serp;
 	
-	private int[] posXmenjar= {25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, // Posicions horizontals on podrà aparèixer aleatoriament el menjar 
+	// Posiciones horizontales en las que podrá aparecer aleatoriamente la comida
+	private int[] posXcomida= {25, 50, 75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, 
 							   350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 625,
 							   650, 675, 700, 725, 750, 775, 800, 825, 850};
 	
-	private int[] posYmenjar= {75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325, // Posicions verticals on podrà aparèixer aleatoriament el menjar
+	// Posiciones verticals en las que podrá aparecer aleatoriamente la comida
+	private int[] posYcomida= {75, 100, 125, 150, 175, 200, 225, 250, 275, 300, 325,
 			   				   350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600, 
 			   				   625};
 	
-	private ImageIcon menjar;
+	private ImageIcon comida;
 	
 	private Random rand = new Random();
-	private int menjarx = rand.nextInt(34); // Random entre les 34 posicions horizontals
-	private int menjary = rand.nextInt(23); // Random entre les 23 posicions verticals
+	private int comidaX = rand.nextInt(34); // Random entre les 34 posiciones horizontales
+	private int comidaY = rand.nextInt(23); // Random entre les 23 posiciones verticales
 	
-	
-	public controls(String nomjugador, boolean verd, boolean blau, boolean vermell, boolean carnivora, boolean vegetariana, boolean omnivora) {
+	// Método inicial al cual llamamos en OpcionesIniciales
+	public Controles(String nombreJugador, boolean verde, boolean azul, boolean rojo, boolean carnivora, boolean vegetariana, boolean omnivora) {
+		musica(); // Hacemos que se reproduzca la música en cuanto inicia la partida
 		
-		this.musica(); // Amb això fem que al iniciar-se el joc, comenci la música
-		
-		
-		// Llegim la imatge i la redimensionem
+		// Leemos la imagen de fondo y la redimensionamos
 		try {
-		    img = ImageIO.read(new File("src/grafics/fons.jpg"));
-		    imgres = img.getScaledInstance(905, 700, Image.SCALE_DEFAULT);
+			imgFondo = ImageIO.read(new File("src/graficos/fondo.jpg"));
+			imgFondoRes = imgFondo.getScaledInstance(905, 700, Image.SCALE_DEFAULT);
 		    
 		} catch (IOException e) {
 		    e.printStackTrace();
 		}
 
+		// Recogemos los valores enviados desde OpcionesIniciales
+		this.nombreJugador = nombreJugador;
 		
-		this.nomjugador = nomjugador;
-		
-		if(verd == true) {
-			color = "verd";
-		}
-		
-		else if(blau == true) {
-			color = "blau";
-		}
-		
-		else if(vermell == true) {
-			color = "vermell";
-		}
-		
+		if(verde == true)
+			color = "verde";
+		else if(azul == true)
+			color = "azul";
+		else if(rojo == true)
+			color = "rojo";
 		
 		if(carnivora == true) {
 			this.carnivora = true;
-			num = 6; // Menjar inicial si és carnívora
+			num = 6; // Comida inicial si es carnívora
 		}
-		
 		else if(vegetariana == true) {
 			this.vegetariana = true;
-			num = 1; // Menjar inicial si és vegetariana
+			num = 1; // Comida inicial si es vegetariana
 		}
-		
 		else if(omnivora == true) {
 			this.omnivora = true;
-			num = rand.nextInt(10)+1; // El menjar inicial és qualsevol
+			num = rand.nextInt(10)+1; // Si es omnívora, la comida inicial es aleatoria
 		}
 		
+		// Añadimos el Listener para que detecte las pulsaciones por teclado
 		addKeyListener(this);
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
-		timer = new Timer(velocitatserp, this);
+		timer = new Timer(velocidadSerp, this);
 		timer.start();
 	}
-	
 	
 	@Override
 	public void paintComponent(Graphics g) { // Mètode amb el que imprimim per pantalla els diferents components dels que està fet la serp. Ha d'anomenar-se "paintComponent", o si no, no funcionarà
 		
 		super.paintComponent(g); // Cridem al mètode super per a que els gràfics de la serp al moure's, es vagin actualitzant i no deixi un rastre
 		
-		g.drawImage(imgres, 0, 0, this); // Rebem la imatge redimensionada 
+		g.drawImage(imgFondoRes, 0, 0, this); // Rebem la imatge redimensionada 
 		
 		if(moviments == 0) {
-			
 			longXserp[2] = 50;
 			longXserp[1] = 75;
 			longXserp[0] = 100;
@@ -151,50 +139,48 @@ public class controls extends JPanel implements KeyListener, ActionListener { //
 			longYserp[0] = 100;
 		}
 		
-		
 		// Amb això mostrem el nom del jugador per pantalla
 		g.setColor(Color.white);
 		g.setFont(new Font("Arial", Font.BOLD, 20));
-		g.drawString("Jugador: "+nomjugador, 50, 50);
-		
+		g.drawString("Jugador: "+nombreJugador, 50, 50);
 		
 		// Amb això mostrem la puntuació per pantalla
 		g.setColor(Color.white);
 		g.setFont(new Font("Arial", Font.BOLD, 20));
-		g.drawString("Puntuació: "+puntuacio, 400, 50);
+		g.drawString("Puntuació: "+puntuacion, 400, 50);
 		
 		// Amb això mostrem la longitud de la serp per pantalla
 		g.setColor(Color.white);
 		g.setFont(new Font("Arial", Font.BOLD, 20));
 		g.drawString("Longitud: "+serplong, 600, 50);
 		
-		serpdreta = new ImageIcon("src/grafics/serpdreta"+color+".png");
-		serpdreta.paintIcon(this, g, longXserp[0], longYserp[0]);
+		serpDerecha = new ImageIcon("src/grafics/serpDerecha"+color+".png");
+		serpDerecha.paintIcon(this, g, longXserp[0], longYserp[0]);
 		
 		for(int a = 0; a < serplong; a++) {
 			
-			if(a == 0 && esquerra) {
+			if(a == 0 && izquierda) {
 				
-				serpesquerra = new ImageIcon("src/grafics/serpesquerra"+color+".png");
-				serpesquerra.paintIcon(this, g, longXserp[a], longYserp[a]);
+				serpIzquierda = new ImageIcon("src/grafics/serpIzquierda"+color+".png");
+				serpIzquierda.paintIcon(this, g, longXserp[a], longYserp[a]);
 			}
 			
-			if(a == 0 && dreta) {
+			if(a == 0 && derecha) {
 				
-				serpdreta = new ImageIcon("src/grafics/serpdreta"+color+".png");
-				serpdreta.paintIcon(this, g, longXserp[a], longYserp[a]);
+				serpDerecha = new ImageIcon("src/grafics/serpDerecha"+color+".png");
+				serpDerecha.paintIcon(this, g, longXserp[a], longYserp[a]);
 			}
 			
-			if(a == 0 && amunt) {
+			if(a == 0 && arriba) {
 				
-				serpamunt = new ImageIcon("src/grafics/serpamunt"+color+".png");
-				serpamunt.paintIcon(this, g, longXserp[a], longYserp[a]);
+				serpArriba = new ImageIcon("src/grafics/serpArriba"+color+".png");
+				serpArriba.paintIcon(this, g, longXserp[a], longYserp[a]);
 			}
 			
-			if(a == 0 && avall) {
+			if(a == 0 && abajo) {
 				
-				serpavall = new ImageIcon("src/grafics/serpavall"+color+".png");
-				serpavall.paintIcon(this, g, longXserp[a], longYserp[a]);
+				serpAbajo = new ImageIcon("src/grafics/serpAbajo"+color+".png");
+				serpAbajo.paintIcon(this, g, longXserp[a], longYserp[a]);
 			}
 			
 			if(a != 0) {
@@ -204,124 +190,79 @@ public class controls extends JPanel implements KeyListener, ActionListener { //
 			
 
 			
-			if((posXmenjar[menjarx]) == longXserp[0] && posYmenjar[menjary] == longYserp[0]) { // Si la serp toca menjar, la seva mida aumenta en 1 i es torna a generar una posició aleatoria per al menjar
-				
-				this.menjarso(); // Amb això fem que al menjar, es reprodueixi un so
-				
+			if((posXcomida[comidaX]) == longXserp[0] && posYcomida[comidaY] == longYserp[0]) { // Si la serp toca menjar, la seva mida aumenta en 1 i es torna a generar una posició aleatoria per al menjar
+				sonidoComer(); // Amb això fem que al menjar, es reprodueixi un so
 				serplong++;
 				
-				if(carnivora == true) {
-					
-					if(num == 6) {
-						puntuacio++;
-					}
-					
-					else if(num == 7) {
-						puntuacio += 2;
-					}
-					
-					else if(num == 8) {
-						puntuacio += 3;
-					}
-					
-					else if(num == 9) {
-						puntuacio += 4;
-					}
-					
-					else if(num == 10) {
-						puntuacio += 5;
-					}
-					
+				if(carnivora == true) {					
+					if(num == 6)
+						puntuacion++;
+					else if(num == 7)
+						puntuacion += 2;
+					else if(num == 8)
+						puntuacion += 3;
+					else if(num == 9)
+						puntuacion += 4;
+					else if(num == 10)
+						puntuacion += 5;
+
 					num = rand.nextInt(5)+6; // Fem que al menjar, el seguent gràfic sigui aleatori
-					
 				}
 				
 				else if(vegetariana == true) {
-					
-					if(num == 1) { 
-						puntuacio += 1;
-					}
-					
-					else if(num == 2) {
-						puntuacio += 2;
-					}
-					
-					else if(num == 3) {
-						puntuacio += 3;
-					}
-					
-					else if(num == 4) {
-						puntuacio += 4;
-					}
-					
-					else if(num == 5) {
-						puntuacio += 5;
-					}
+					if(num == 1) 
+						puntuacion += 1;
+					else if(num == 2)
+						puntuacion += 2;
+					else if(num == 3)
+						puntuacion += 3;
+					else if(num == 4)
+						puntuacion += 4;
+					else if(num == 5)
+						puntuacion += 5;
 					
 					num = rand.nextInt(5)+1;
-					
 				}
 				
 				else if(omnivora == true) {
-					
-					if(num == 1) { 
-						puntuacio++;
-					}
-					
-					else if(num == 2) {
-						puntuacio += 2;
-					}
-					
-					else if(num == 3) {
-						puntuacio += 3;
-					}
-					
-					else if(num == 4) {
-						puntuacio += 4;
-					}
-					
-					else if(num == 5) {
-						puntuacio += 5;
-					}
-					
-					else if(num == 6) {
-						puntuacio++;
-					}
-					
-					else if(num == 7) {
-						puntuacio += 2;
-					}
-					
-					else if(num == 8) {
-						puntuacio += 3;
-					}
-					
-					else if(num == 9) {
-						puntuacio += 4;
-					}
-					
-					else if(num == 10) {
-						puntuacio += 5;
-					}
+					if(num == 1) 
+						puntuacion++;
+					else if(num == 2)
+						puntuacion += 2;
+					else if(num == 3)
+						puntuacion += 3;
+					else if(num == 4)
+						puntuacion += 4;
+					else if(num == 5)
+						puntuacion += 5;
+					else if(num == 6)
+						puntuacion++;
+					else if(num == 7)
+						puntuacion += 2;
+					else if(num == 8)
+						puntuacion += 3;
+					else if(num == 9)
+						puntuacion += 4;
+					else if(num == 10)
+						puntuacion += 5;
 					
 					num = rand.nextInt(10)+1;
 				}
-				
-				menjarx = rand.nextInt(34);
-				menjary = rand.nextInt(23);
+				comidaX = rand.nextInt(34);
+				comidaY = rand.nextInt(23);
 			}
 			
-			menjar = new ImageIcon("src/grafics/menjar"+num+".png");
-			menjar.paintIcon(this, g, posXmenjar[menjarx], posYmenjar[menjary]);
+			comida = new ImageIcon("src/grafics/menjar"+num+".png");
+			comida.paintIcon(this, g, posXcomida[comidaX], posYcomida[comidaY]);
 			
 			for(int b = 1; b < serplong; b++) {
 				
 				if(longXserp[b] == longXserp[0] && longYserp[b] == longYserp[0]) {
 				
-					amunt = false;
-					avall = false;
-					dreta = false;
-					esquerra = false;
+					arriba = false;
+					abajo = false;
+					derecha = false;
+					izquierda = false;
 					
 					clip.stop();
 					
@@ -331,31 +272,26 @@ public class controls extends JPanel implements KeyListener, ActionListener { //
 						
 					}
 					
-					fideljocso();
+					sonidoGameOver();
 					
 					g.setColor(Color.WHITE);
 					g.setFont(new Font("Arial", Font.BOLD, 50));
 					g.drawString("Fi del joc", 350, 300);
 					
-					
 					g.setFont(new Font("Arial", Font.BOLD, 20));
 					g.drawString("Prem espai per reiniciar.", 350, 340);
-					
 				}
 			}
-			
 		}
-	
 		g.dispose();
 	}
-
 	
 	@Override
 	public void keyPressed(KeyEvent ke) {
 		
 		if(ke.getKeyCode() == KeyEvent.VK_SPACE){ // Prement espai es reinicia el joc
 			moviments = 0;
-			puntuacio = 0;
+			puntuacion = 0;
 			serplong = 3;
 			repaint();
 			
@@ -369,76 +305,76 @@ public class controls extends JPanel implements KeyListener, ActionListener { //
 			clip.stop();
 			
 			musica();
-			menjarx = rand.nextInt(34);
-			menjary = rand.nextInt(23);
+			comidaX = rand.nextInt(34);
+			comidaY = rand.nextInt(23);
 		}
 		
 		if(ke.getKeyCode() == KeyEvent.VK_RIGHT){ // Si polses la tecla X, la seva variable boolean es posa en true
 			moviments++;
-			dreta = true;
+			derecha = true;
 			
-			if(!esquerra) {
-				dreta = true;
+			if(!izquierda) {
+				derecha = true;
 			}
 			
 			else {
-				dreta = false;
-				esquerra = true;
+				derecha = false;
+				izquierda = true;
 			}
 		
-			amunt = false;
-			avall = false;
+			arriba = false;
+			abajo = false;
 		}
 		
 		if(ke.getKeyCode() == KeyEvent.VK_LEFT){
 			moviments++;
-			esquerra = true;
+			izquierda = true;
 			
-			if(!dreta) {
-				esquerra = true;
+			if(!derecha) {
+				izquierda = true;
 			}
 			
 			else {
-				esquerra = false;
-				dreta = true;
+				izquierda = false;
+				derecha = true;
 			}
 		
-			amunt = false;
-			avall = false;
+			arriba = false;
+			abajo = false;
 		}
 		
 		if(ke.getKeyCode() == KeyEvent.VK_UP){
 			moviments++;
-			amunt = true;
+			arriba = true;
 			
-			if(!avall) {
-				amunt = true;
+			if(!abajo) {
+				arriba = true;
 			}
 			
 			else {
-				amunt = false;
-				avall = true;
+				arriba = false;
+				abajo = true;
 			}
 		
-			esquerra = false;
-			dreta = false;
+			izquierda = false;
+			derecha = false;
 		}
 		
 		if(ke.getKeyCode() == KeyEvent.VK_DOWN){
 			moviments++;
-			avall = true;
+			abajo = true;
 			
-			if(!amunt) {
-				avall = true;
+			if(!arriba) {
+				abajo = true;
 			}
 			
 			else {
-				amunt = true;
-				avall = false;
+				arriba = true;
+				abajo = false;
 			}
 		
-			esquerra = false;
-			dreta = false;
+			izquierda = false;
+			derecha = false;
 		}
 
 	}
@@ -457,7 +393,7 @@ public class controls extends JPanel implements KeyListener, ActionListener { //
 		
 		timer.start();
 		
-		if(dreta) {
+		if(derecha) {
 			
 			for(int d = serplong-1; d>=0; d--) {
 				longYserp[d+1] = longYserp[d];
@@ -481,7 +417,7 @@ public class controls extends JPanel implements KeyListener, ActionListener { //
 			repaint(); // Mètode per refrescar els gràfics tornant a cridar al mètode paintComponent(). Es usa quan es realitzan canvis sobre els gràfics
 		}
 		
-		if(esquerra) {
+		if(izquierda) {
 			
 			for(int d = serplong-1; d>=0; d--) {
 				longYserp[d+1] = longYserp[d];
@@ -505,7 +441,7 @@ public class controls extends JPanel implements KeyListener, ActionListener { //
 			repaint();
 		}
 		
-		if(amunt) {
+		if(arriba) {
 			
 			for(int d = serplong-1; d>=0; d--) {
 				longXserp[d+1] = longXserp[d];
@@ -529,7 +465,7 @@ public class controls extends JPanel implements KeyListener, ActionListener { //
 			repaint();
 		}
 		
-		if(avall) {
+		if(abajo) {
 			
 			for(int d = serplong-1; d>=0; d--) {
 				longXserp[d+1] = longXserp[d];
@@ -555,22 +491,23 @@ public class controls extends JPanel implements KeyListener, ActionListener { //
 		
 	}
 	
-	public static void musica() { // Mètode que reprodueix la música
+	// Método que reproduce la música de fondo
+	public static void musica() { 
 		  try {
-			   File file = new File("src/so/musica.wav");
+			   File file = new File("src/sonido/musica.wav");
 			   clip = AudioSystem.getClip();
 			   clip.open(AudioSystem.getAudioInputStream(file));
 			   clip.start();
 		  
 		  } catch (Exception e) {
-		   
 			  System.err.println(e.getMessage());
 		  }
 	}
 	
-	public static void menjarso() { // Mètode que reprodueix el so de menjar
+	// Método que reproduce el sonido al comer
+	public static void sonidoComer() { 
 		  try {
-			   File file = new File("src/so/menjar.wav");
+			   File file = new File("src/sonido/comer.wav");
 			   Clip clip = AudioSystem.getClip();
 			   clip.open(AudioSystem.getAudioInputStream(file));
 			   clip.start();
@@ -581,18 +518,16 @@ public class controls extends JPanel implements KeyListener, ActionListener { //
 		  }
 	}
 	
-	public static void fideljocso() { // Mètode que reprodueix un so al morir
-		  try {
-			   File file = new File("src/so/fideljoc.wav");
-			   clipfi = AudioSystem.getClip();
-			   clipfi.open(AudioSystem.getAudioInputStream(file));
-			   clipfi.start();
-		  
-		  } catch (Exception e) {
-		   
+	// Método que reproduce el sonido de fin de la partida
+	public static void sonidoGameOver() {
+		try {
+			File file = new File("src/sonido/gameover.wav");
+			clipfi = AudioSystem.getClip();
+			clipfi.open(AudioSystem.getAudioInputStream(file));
+			clipfi.start();
+			
+		} catch (Exception e) {
 			  System.err.println(e.getMessage());
-		  }
+		}
 	}
-
 }
-
